@@ -63,7 +63,7 @@ class Graph:
             for next_vertex in self.vertices[current_vertex].out_edges.keys():
                 self.vertices[current_vertex].out_edges[next_vertex].calc_coverage(self.vertices[current_vertex].coverage,self.vertices[next_vertex].coverage)
     
-    def graphviz(self, view):
+    def graphviz(self, view, outfile):
 
         for vertex in self.vertices:
             if view == 'full':
@@ -77,7 +77,7 @@ class Graph:
                     self.graph.edge(vertex, next_vertex, label = str(self.vertices[vertex].out_edges[next_vertex].coverage)+','+
                                     str(len(self.vertices[vertex].out_edges[next_vertex].seq)))
                     
-        self.graph.render(filename='my_graph.dot', view=True)
+        self.graph.render(filename=outfile, view=True)
         
 
 if __name__ == '__main__':
@@ -87,11 +87,13 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--file', help='fasta file', type=str, required=True)
     parser.add_argument('-k', '--kmer_size', help='kmer size', type=int, default=15)
     parser.add_argument('-v', '--view', help='choose full or nick view', type=str, required=True)
+    parser.add_argument('-o', '--outfile', help='outfile with graph in .dot format', type=str, required=True)
     
     args = parser.parse_args()
     file = args.file
     k = args.kmer_size
     view = args.view
+    outfile = args.outfile
     
     my_graph = Graph(k)
     
@@ -102,5 +104,5 @@ if __name__ == '__main__':
             my_graph.add_read(str(record.reverse_complement().seq))
 
     my_graph.calc_init_edge_coverage()
-    my_graph.graphviz(view)
+    my_graph.graphviz(view, outfile)
           
